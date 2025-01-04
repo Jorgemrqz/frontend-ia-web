@@ -1,0 +1,31 @@
+<div class="container">
+    <h1 class="title">Predicción de Imagenes</h1>
+    <div class="upload-section">
+      <input
+        type="file"
+        id="file-upload"
+        class="file-input"
+        (change)="onImageSelected($event)"
+      />
+      <label for="file-upload" class="upload-label">
+        Seleccionar Imagen
+      </label>
+    </div>
+    <div *ngIf="imagePreview" class="preview-section">
+      <img [src]="imagePreview" alt="Preview" class="image-preview" />
+    </div>
+    <button
+      class="upload-button"
+      [disabled]="!selectedImage"
+      (click)="onUpload()"
+    >
+      Predecir
+    </button>
+    <div *ngIf="predictions.length > 0" class="predictions-section">
+      <h2>Predicciones:</h2>
+      <ul>
+        <li *ngFor="let prediction of predictions">{{ prediction }}</li>
+      </ul>
+    </div>
+  </div>
+  
