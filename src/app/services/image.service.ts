@@ -12,7 +12,7 @@ export class ImageService {
 
   uploadImage(image: File): Observable<any> {
     const formData = new FormData();
-    formData.append('image', image);
+    formData.append('archivo', image);
 
     return this.http.post(this.apiUrl, formData);
   }

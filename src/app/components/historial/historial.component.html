@@ -1,0 +1,18 @@
+<div class="historial-container">
+  <h1>Historial de Predicciones</h1>
+  <div *ngIf="historial.length > 0; else loading">
+    <div class="historial-item" *ngFor="let item of historial">
+      <img [src]="item.url" alt="Imagen predicha" class="historial-image" />
+      <div class="historial-details">
+        <p><strong>Predicción:</strong> {{ item.prediccion }}</p>
+        <p><strong>Fecha:</strong> {{ item.fecha_subida }}</p>
+        <p><strong>Hora:</strong> {{ item.hora_subida }}</p>
+      </div>
+    </div>
+  </div>
+  <ng-template #loading>
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+  </ng-template>
+</div>

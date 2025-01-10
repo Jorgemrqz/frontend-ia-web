@@ -11,7 +11,7 @@ export class TextToSpeechService {
 
   constructor(private http: HttpClient) {}
 
-  synthesizeSpeech(text: string): Observable<any> { // Cambié el tipo a 'any'
+  synthesizeSpeech(text: string): Observable<any> { 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
