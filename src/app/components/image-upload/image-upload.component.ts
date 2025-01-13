@@ -15,10 +15,99 @@ export class ImageUploadComponent {
   selectedImage: File | null = null;
   imagePreview: string | ArrayBuffer | null = null;
   predictions: string[] = [];
+  videoElement: HTMLVideoElement | null = null;
+  canvasElement: HTMLCanvasElement | null = null;
+  stream: MediaStream | null = null;
+
+  // Definir el historial de imágenes
+  historial: { url: string, prediccion: string, fecha_subida: string, hora_subida: string }[] = [];
 
   constructor(private imageService: ImageService,
     private textToSpeechService: TextToSpeechService) {}
+    
+    ngAfterViewInit() {
+      this.videoElement = document.getElementById('camera-stream') as HTMLVideoElement;
+      this.canvasElement = document.getElementById('camera-canvas') as HTMLCanvasElement;
+    }
   
+    // Activar la cámara
+    async startCamera() {
+      try {
+        this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (this.videoElement) {
+          this.videoElement.srcObject = this.stream;
+        }
+      } catch (error) {
+        console.error('Error al activar la cámara:', error);
+      }
+    }
+
+    // Desactivar la cámara
+  stopCamera() {
+    if (this.stream) {
+      this.stream.getTracks().forEach((track) => track.stop());
+      this.stream = null;
+      if (this.videoElement) {
+        this.videoElement.srcObject = null;
+      }
+    } else {
+      alert('La cámara ya está desactivada.');
+    }
+  }
+  
+    // Capturar la imagen desde la cámara
+    captureImage() {
+      if (this.videoElement && this.canvasElement) {
+        const context = this.canvasElement.getContext('2d');
+        if (context) {
+          // Limpiar el canvas antes de dibujar la nueva imagen
+          context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
+    
+          // Establecer el tamaño del canvas según el tamaño del video
+          this.canvasElement.width = this.videoElement.videoWidth;
+          this.canvasElement.height = this.videoElement.videoHeight;
+    
+          // Dibujar la imagen del video en el canvas
+          context.drawImage(this.videoElement, 0, 0);
+    
+          // Obtener la imagen como base64 para la vista previa
+          const imageData = this.canvasElement.toDataURL('image/png');
+    
+          // Actualizar la vista previa con la nueva imagen
+          this.imagePreview = imageData;
+    
+          // Asegurarse de crear un nuevo archivo a partir de los datos de la imagen base64
+          this.selectedImage = this.dataURLtoFile(imageData, 'captured-image-' + new Date().getTime() + '.png');
+        }
+      }
+    }
+    
+    
+  
+    // Convertir base64 a archivo
+    dataURLtoFile(dataurl: string, filename: string): File {
+      const arr = dataurl.split(',');
+      const mime = arr[0].match(/:(.*?);/)![1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    }
+
+      // Agregar la imagen al historial
+  addToHistorial(image: string) {
+    const newItem = {
+      url: image,
+      prediccion: 'Predicción de ejemplo', // Reemplaza con las predicciones reales si es necesario
+      fecha_subida: new Date().toLocaleDateString(),
+      hora_subida: new Date().toLocaleTimeString(),
+    };
+    this.historial.unshift(newItem); // Usamos unshift para agregar al principio
+  }
+
 // Método para manejar la selección de imágenes
 onImageSelected(event: any): void {
   if (event.target.files && event.target.files[0]) {

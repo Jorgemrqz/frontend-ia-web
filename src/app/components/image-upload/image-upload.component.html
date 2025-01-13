@@ -1,31 +1,49 @@
 <div class="container">
-    <h1 class="title">Predicción de Imagenes</h1>
-    <div class="upload-section">
-      <input
-        type="file"
-        id="file-upload"
-        class="file-input"
-        (change)="onImageSelected($event)"
-      />
-      <label for="file-upload" class="upload-label">
-        Seleccionar Imagen
-      </label>
-    </div>
-    <div *ngIf="imagePreview" class="preview-section">
-      <img [src]="imagePreview" alt="Preview" class="image-preview" />
-    </div>
-    <button
-      class="upload-button"
-      [disabled]="!selectedImage"
-      (click)="onUpload()"
-    >
-      Predecir
-    </button>
-    <div *ngIf="predictions.length > 0" class="predictions-section">
-      <h2>Predicciones:</h2>
-      <ul>
-        <li *ngFor="let prediction of predictions">{{ prediction }}</li>
-      </ul>
+  <h1 class="title">Predicción de Imágenes</h1>
+
+  <!-- Sección para Captura de Imagen desde Cámara -->
+  <div class="camera-section">
+    <video id="camera-stream" autoplay playsinline></video>
+    <canvas id="camera-canvas"></canvas>
+    <div class="camera-buttons">
+      <button id="start-camera" (click)="startCamera()">Activar Cámara</button>
+      <button id="stop-camera" (click)="stopCamera()">Desactivar Cámara</button>
+      <button id="capture-image" (click)="captureImage()">Capturar Imagen</button>
     </div>
   </div>
+
+  <!-- Sección para Subir una Imagen -->
+  <div class="upload-section">
+    <input
+      type="file"
+      id="file-upload"
+      class="file-input"
+      (change)="onImageSelected($event)"
+    />
+    <label for="file-upload" class="upload-label">
+      Seleccionar Imagen
+    </label>
+  </div>
+
+  <!-- Vista previa de la imagen seleccionada -->
+  <div *ngIf="imagePreview" class="preview-section">
+    <img [src]="imagePreview" alt="Preview" class="image-preview" />
+  </div>
   
+  <!-- Botón para Predecir -->
+  <button
+    class="upload-button"
+    [disabled]="!selectedImage"
+    (click)="onUpload()"
+  >
+    Predecir
+  </button>
+
+  <!-- Resultados de las predicciones -->
+  <div *ngIf="predictions.length > 0" class="predictions-section">
+    <h2>Predicciones:</h2>
+    <ul>
+      <li *ngFor="let prediction of predictions">{{ prediction }}</li>
+    </ul>
+  </div>
+</div>
