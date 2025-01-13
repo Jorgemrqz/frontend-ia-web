@@ -29,7 +29,7 @@
   <div *ngIf="imagePreview" class="preview-section">
     <img [src]="imagePreview" alt="Preview" class="image-preview" />
   </div>
-  
+
   <!-- Botón para Predecir -->
   <button
     class="upload-button"
@@ -46,4 +46,3 @@
       <li *ngFor="let prediction of predictions">{{ prediction }}</li>
     </ul>
   </div>
-</div>

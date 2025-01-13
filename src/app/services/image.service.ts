@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ImageService {
-  private apiUrl = 'http://127.0.0.1:8000/predict/'; // URL del backend
+  private apiUrl = 'http://127.0.0.1:8000/prediccion/'; // URL del backend
 
   constructor(private http: HttpClient) { }
 
