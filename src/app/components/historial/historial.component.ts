@@ -16,7 +16,7 @@ export class HistorialComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
-    this.http.get('http://127.0.0.1:8000/historial/').subscribe((data: any) => {
+    this.http.get('http://35.238.9.234:8000/historial/').subscribe((data: any) => {
       this.historial = data;
       this.isLoading = false;
     });

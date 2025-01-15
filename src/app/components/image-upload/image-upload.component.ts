@@ -128,7 +128,7 @@ export class ImageUploadComponent {
       const formData = new FormData();
       formData.append('archivo', this.selectedImage, this.selectedImage.name);
 
-      this.http.post<any>('http://localhost:8000/prediccion/', formData).subscribe(
+      this.http.post<any>('http://35.238.9.234:8000/prediccion/', formData).subscribe(
         (response) => {
           this.predictions = response.predictions;
           this.addToHistorial(response.url);
@@ -144,27 +144,45 @@ export class ImageUploadComponent {
   }
 
   // Método para sintetizar las predicciones como voz
-  speakPredictions(): void {
-    const introText = "Las etiquetas mostradas en la imágen son:";
-    const predictionText = ` ${this.predictions.join(' y ')}`;
-    const textToSpeak = introText + predictionText;
-
-    this.textToSpeechService.synthesizeSpeech(textToSpeak).subscribe(
-      (response: any) => {
-        if (response.audioContent) {
-          const audioBlob = new Blob([this.base64ToArrayBuffer(response.audioContent)], { type: 'audio/mpeg' });
-          const audioUrl = window.URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-          audio.play().catch(error => console.error('Error playing audio:', error));
-        } else {
-          console.error('Audio content is missing in the response.');
-        }
-      },
-      (error) => {
-        console.error('Error synthesizing speech:', error);
-      }
-    );
+speakPredictions(): void {
+  if (this.predictions.length === 0) {
+    console.warn('No hay predicciones para sintetizar.');
+    return;
   }
+
+  const introText = "Las etiquetas mostradas en la imagen son:";
+  
+  // Construir el texto con conectores para una narración más natural
+  let predictionText = "";
+  this.predictions.forEach((prediction, index) => {
+    if (index === 0) {
+      predictionText += ` ${prediction}`;
+    } else if (index === this.predictions.length - 1) {
+      predictionText += `, y ${prediction}`;
+    } else {
+      predictionText += `, además de ${prediction}`;
+    }
+  });
+
+  const textToSpeak = introText + predictionText;
+
+  // Llamar al servicio de síntesis de voz
+  this.textToSpeechService.synthesizeSpeech(textToSpeak).subscribe(
+    (response: any) => {
+      if (response.audioContent) {
+        const audioBlob = new Blob([this.base64ToArrayBuffer(response.audioContent)], { type: 'audio/mpeg' });
+        const audioUrl = window.URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play().catch(error => console.error('Error reproduciendo el audio:', error));
+      } else {
+        console.error('No se encontró contenido de audio en la respuesta.');
+      }
+    },
+    (error) => {
+      console.error('Error al sintetizar el habla:', error);
+    }
+  );
+}
 
   // Función para convertir base64 a ArrayBuffer
   base64ToArrayBuffer(audioContent: string): BlobPart {
